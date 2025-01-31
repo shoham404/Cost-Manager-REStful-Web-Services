@@ -1,19 +1,38 @@
+/**
+ * Express router for handling user-related routes.
+ * This router provides endpoints to add a user and retrieve user details along with aggregated costs.
+ *
+ * @module userRouter
+ */
+
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Cost = require('../models/Cost');
 
-// הוספת משתמש חדש
+/**
+ * Route to add a new user.
+ * This route requires user details and validates them before saving.
+ *
+ * @name post/add
+ * @function
+ * @memberof module:userRouter
+ * @param {express.Request} req - The request object, expecting user details.
+ * @param {express.Response} res - The response object used to send back data or errors.
+ * @throws {400} If required fields are missing or user ID already exists.
+ * @throws {500} If there is a server error.
+ */
+
 router.post('/add', async (req, res) => {
   try {
     const { id, first_name, last_name, birthday, marital_status } = req.body;
 
-    // בדיקת שדות חובה
+    // Mandatory fields validation
     if (!id || !first_name || !last_name || !birthday || !marital_status) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // יצירת משתמש חדש
+    // Creating a new user
     const newUser = new User({
       id,
       first_name,
@@ -32,9 +51,22 @@ router.post('/add', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
 });
 
-// שליפת פרטי משתמש לפי ID
+/**
+ * Route to retrieve a user by ID along with their total cost.
+ * This route retrieves user details and computes the total cost associated with the user.
+ *
+ * @name get/:id
+ * @function
+ * @memberof module:userRouter
+ * @param {express.Request} req - The request object, expecting a user ID.
+ * @param {express.Response} res - The response object used to send back data or errors.
+ * @throws {404} If the user is not found.
+ * @throws {500} If there is a server error.
+ */
+
 router.get('/:id', async (req, res) => {
   try {
     const user = await User.findOne({ id: req.params.id });
@@ -42,7 +74,7 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // חישוב עלות כוללת
+    // Total cost calculation
     const totalCost = await Cost.aggregate([
       { $match: { userid: req.params.id } },
       { $group: { _id: null, total: { $sum: '$sum' } } }

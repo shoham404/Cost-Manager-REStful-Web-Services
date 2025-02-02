@@ -41,7 +41,7 @@ The project is built using modern web development technologies:
 
 ## 📂 Project Structure
 ```
-📂 final-project/
+📂 Project/
  ├── 📁 models/         # Mongoose models (User, Cost, Report)
  ├── 📁 routes/         # Express API routes (users, costs, reports)
  ├── 📁 tests/          # Jest-based unit tests
@@ -51,5 +51,77 @@ The project is built using modern web development technologies:
  ├── .env.example      # Example environment variables
  ├── README.md         # Project documentation
 ```
+
+---
+
+## 🚀 Getting Started
+To set up and run this project, you need to install all required dependencies. Follow these steps:
+#### 1️⃣ Clone the repository
+```
+git clone https://github.com/YOUR_GITHUB_USERNAME/final-project.git
+cd final-project
+```
+#### 2️⃣ Install dependencies
+**Install required dependencies:** Run the following command to install all necessary packages:
+```
+npm install
+```
+##### Ensure the following dependencies are installed:
+**Project dependencies:**
+```
+npm install express body-parser dotenv mongodb mongoose
+```
+**Development & Testing dependencies:**
+```
+npm install --save-dev chai jest mocha sinon supertest
+```
+### 3️⃣ Set up environment variables
+Create a .env file in the root directory and add the following:
+```
+MONGO_URI=your_mongodb_connection_string
+```
+### 4️⃣ To start the server
+```
+npm start
+```
+The API will be available at http://localhost:3000/.
+### 5️⃣ To run the tests:
+```
+npm test
+```
+#### Tests cover:
+
+* User management
+* Expense handling
+* Report generation
+* Error handling cases
+
+**💡 This ensures all necessary dependencies are installed and properly configured before running the application. 🚀**
+
+---
+
+## 📡 API Endpoints
+### 🧑 User Routes
+| Method | Endpoint | Description |
+|:----------:|:----------:|:----------:|
+| **POST**   | `/api/users/add` | Add a new user |
+| **GET**  | `/api/users/:id`   | Retrieve user details |
+
+### 💰 Expense Routes
+| Method | Endpoint | Description |
+|:----------:|:----------:|:-------
+| **POST**   | `/api/add` | Add a new expense |
+
+### 📊 Report Routes
+| Method | Endpoint | Description |
+|:----------:|:----------:|:-------
+| **GET**   | `/api/report` | Retrieve a monthly expense report |
+
+---
+
+## 📝 License
+This project is licensed under the **MIT License.** 
+
+
 
 

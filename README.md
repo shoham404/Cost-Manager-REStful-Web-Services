@@ -58,8 +58,7 @@ The project is built using modern web development technologies:
 To set up and run this project, you need to install all required dependencies. Follow these steps:
 #### 1️⃣ Clone the repository
 ```
-git clone https://github.com/YOUR_GITHUB_USERNAME/Cost-Manager-REStful-Web-Services.git
-cd final-project
+git clone https://github.com/shoham404/Cost-Manager-REStful-Web-Services.git
 ```
 #### 2️⃣ Install dependencies
 **Install required dependencies:** Run the following command to install all necessary packages:

@@ -4,10 +4,10 @@
  * Each report includes a user ID, year, month, and an array of cost items for that month and year.
  *
  * @typedef {Object} Report
- * @property {string} userid - The unique ID of the user associated with the report.
- * @property {number} year - The year of the report.
- * @property {number} month - The month of the report (1 = January, 2 = February, etc.).
- * @property {Array} data - An array of cost items (objects) for that user in the given year and month.
+ * @property {string} userid - The unique ID of the user associated with the report. (required)
+ * @property {number} year - The year of the report. (required).
+ * @property {number} month - The month of the report (1 = January, 2 = February, etc.) (required).
+ * @property {Array} data - An array of cost items (objects) for that user in the given year and month. (required).
  * @property {Date} created_at - The date when the report was created (defaults to the current date).
  */
 

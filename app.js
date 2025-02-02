@@ -7,6 +7,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
 const usersRoutes = require('./routes/users');
 const costsRoutes = require('./routes/costs');
 const aboutRoutes = require('./routes/about');
@@ -21,7 +23,7 @@ const app = express();
  * @throws {Error} Will throw an error if the connection fails.
  */
 
-const MONGO_URI = 'mongodb+srv://TempAdmin:wrk4TboyBJQRd4s1@cluster0.kktmv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true

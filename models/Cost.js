@@ -10,6 +10,16 @@
  * @property {number} sum - The total amount of the expense, must be a positive number (minimum: 0).
  * @property {Date} date - The date the expense was made. Defaults to the current date if not provided.
  */
+/**
+ * Cost schema for storing user costs.
+ *
+ * @typedef {Object} Cost
+ * @property {string} description - A brief description of the expense. (required, maxLength: 255)
+ * @property {string} category - The category of the expense. (required).
+ * @property {string} userid - The unique ID of the user associated with the report. (required)
+ * @property {number} sum - The total amount of the expense. (required, min: 0).
+ * @property {Date} date - The date when the expense occurred. (default: Date.now).
+ */
 
 const mongoose = require('mongoose');
 

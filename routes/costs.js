@@ -15,8 +15,9 @@ const User = require('../models/User');
  * @param {number} sum - The total amount of the expense (must be a positive number).
  * @param {string} [date] - The date of the expense. If not provided, the current date is used.
  * @returns {object} 201 - The newly created cost item.
- * @returns {Error} 400 - If required fields are missing or the sum is invalid.
- * @returns {Error} 500 - If there is a server error.
+ * @throws {Error} 400 - If required fields are missing or the sum is invalid.
+ * @throws {Error} 404 - If the user does not exist.
+ * @throws {Error} 500 - If there is a server error.
  */
 
 router.post('/add', async (req, res) => {
@@ -55,21 +56,21 @@ router.post('/add', async (req, res) => {
     }
 });
 
-/**
- * Retrieves a monthly report of expenses for a specific user.
- * This route handles GET requests to retrieve the cost items for a specific user,
- * year, and month, and returns them grouped by category.
- *
- * @route GET /api/costs/report
- * @param {string} id - The ID of the user whose report is being fetched.
- * @param {number} year - The year for which the report is generated.
- * @param {number} month - The month for which the report is generated (1 = January, 12 = December).
- * @returns {object[]} 200 - A list of cost items grouped by category for the specified user, year, and month.
- * @returns {Error} 400 - If any required query parameters are missing or invalid.
- * @returns {Error} 404 - If no data is found for the specified user and date range.
- * @returns {Error} 500 - If there is a server error.
- */
 
+/**
+ * @route GET /report
+ * @description Retrieves a monthly expense report for a specific user.
+ * @param {Object} req - The request object.
+ * @param {Object} req.query - Query parameters for the request.
+ * @param {string} req.query.id - The ID of the user.
+ * @param {string} req.query.year - The year for which to generate the report.
+ * @param {string} req.query.month - The month for which to generate the report.
+ * @param {Object} res - The response object.
+ * @returns {Object} JSON response containing the report data.
+ * @throws {Object} Returns a 400 error if parameters are missing or invalid.
+ * @throws {Object} Returns a 404 error if no data is found for the specified user and date range.
+ * @throws {Object} Returns a 500 error if an internal server error occurs.
+ */
 router.get('/report', async (req, res) => {
     try {
         const { id, year, month } = req.query;
@@ -86,53 +87,59 @@ router.get('/report', async (req, res) => {
 
         console.log(`Fetching report for User ID: ${id}, Year: ${year}, Month: ${month}`);
 
-        // Calculating the date range for the requested month
         const startDate = new Date(parsedYear, parsedMonth - 1, 1);
-        const endDate = new Date(parsedYear, parsedMonth, 31, 23, 59, 59, 999);
+        const endDate = new Date(parsedYear, parsedMonth, 0, 23, 59, 59, 999);
 
         console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
 
-        // Retrieving all expenses for the requested month
-        const costs = await Cost.find({
-            userid: id,
-            date: { $gte: startDate, $lte: endDate }
-        });
+        // Check if a report already exists for the requested month and year.
+        const existingReport = await Report.findOne({ userid: id, year: parsedYear, month: parsedMonth });
 
-        console.log(`Fetched ${costs.length} cost items`);
+        // Retrieve all expenses for the requested month.
+        const costs = await Cost.find({ userid: id, date: { $gte: startDate, $lte: endDate } });
 
-        if (costs.length === 0) {
+        if (!costs.length) {
             return res.status(404).json({ message: 'No data found for the specified user and date range' });
         }
 
-        // Organizing the data by categories
-        const categorizedData = {};
+        // Organizing expenses by categories.
+        const categorizedData = costs.reduce((acc, cost) => {
+            acc[cost.category] = acc[cost.category] || { total: 0, items: [] };
+            acc[cost.category].total += cost.sum;
+            acc[cost.category].items.push({ description: cost.description, sum: cost.sum, date: cost.date });
+            return acc;
+        }, {});
 
-        costs.forEach(cost => {
-            if (!categorizedData[cost.category]) {
-                categorizedData[cost.category] = {
-                    total: 0,
-                    items: []
-                };
-            }
-
-            categorizedData[cost.category].total += cost.sum;
-            categorizedData[cost.category].items.push({
-                description: cost.description,
-                sum: cost.sum,
-                date: cost.date
-            });
-        });
-
-        // Converting the object into a JSON list formatted according to the requested structure
         const reportData = Object.entries(categorizedData).map(([category, data]) => ({
-            category: category,
+            category,
             total: data.total,
             items: data.items
         }));
 
-        console.log('Final Report Data:', reportData);
+        console.log('Generated Report Data:', reportData);
 
-        res.json(reportData);
+        if (existingReport) {
+            // Comparing the existing report with the new one to check for changes.
+            if (JSON.stringify(existingReport.data) === JSON.stringify(reportData)) {
+                console.log('No changes detected, returning existing report.');
+                return res.json(existingReport.data);
+            }
+
+            console.log('Changes detected, updating report.');
+            await Report.deleteOne({ _id: existingReport._id });
+        }
+
+        // Creating a new report and saving it to the database.
+        const newReport = await Report.create({
+            userid: id,
+            year: parsedYear,
+            month: parsedMonth,
+            data: reportData
+        });
+
+        console.log('New report saved.');
+        res.json(newReport.data);
+
     } catch (err) {
         console.error('Error fetching report:', err);
         res.status(500).json({ error: 'Internal server error' });

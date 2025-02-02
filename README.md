@@ -119,6 +119,17 @@ npm test
 
 ---
 
+## 🤝 Contributing
+Want to contribute? Follow these steps:
+
+1. **Fork** this repository
+2. **Create** a new feature branch (git checkout -b feature-branch)
+3. **Commit** changes (git commit -m "Added new feature")
+4. **Push** to GitHub (git push origin feature-branch)
+5. **Submit** a pull request 🚀
+
+---
+
 ## 📝 License
 This project is licensed under the **MIT License.** 
 

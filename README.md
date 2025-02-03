@@ -72,7 +72,7 @@ npm install express body-parser dotenv mongodb mongoose
 ```
 **Development & Testing dependencies:**
 ```
-npm install --save-dev chai jest mocha sinon supertest
+npm install --save-dev jest supertest
 ```
 ### 3️⃣ Set up environment variables
 Create a .env file in the root directory and add the following:

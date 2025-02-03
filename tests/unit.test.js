@@ -17,7 +17,7 @@ const Report = require('../models/Report');
  * @returns {Promise<void>} Resolves when the database connection is established.
  */
 beforeAll(async () => {
-    // התחברות למסד הנתונים לפני הרצת הבדיקות
+    // Connecting to the DataBase
     await mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -113,7 +113,7 @@ describe('User Routes', () => {
         const response = await request(app)
             .post('/api/users/add')
             .send({
-                id: "999999", // כבר קיים
+                id: "999999", 
                 first_name: "Duplicate",
                 last_name: "User",
                 birthday: "1995-05-15",

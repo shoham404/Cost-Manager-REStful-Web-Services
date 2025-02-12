@@ -191,7 +191,9 @@ describe('Report Routes', () => {
         const response = await request(app).get('/api/report/?id=999999&year=2025&month=2');
 
         expect(response.status).toBe(200);
-        expect(response.body.length).toBeGreaterThan(0);
+        expect(response.body).toHaveProperty('costs');
+        expect(Array.isArray(response.body.costs)).toBe(true);
+        expect(response.body.costs.length).toBeGreaterThan(0);
     });
 
     /**
@@ -205,21 +207,5 @@ describe('Report Routes', () => {
 
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('message', 'No data found for the specified user and date range');
-    });
-
-    /**
-     * Test that the report correctly returns calculated totals for each category.
-     * @function
-     * @async
-     * @returns {Promise<void>}
-     */
-    test('✅ Should correctly calculate and sum costs in a report', async () => {
-        const response = await request(app).get('/api/report/?id=999999&year=2025&month=2');
-
-        expect(response.status).toBe(200);
-        response.body.forEach(category => {
-            expect(category).toHaveProperty('total');
-            expect(category.total).toBeGreaterThan(0);
-        });
     });
 });

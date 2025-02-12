@@ -77,6 +77,11 @@ router.get('/report', async (req, res) => {
     try {
         const { id, year, month } = req.query;
 
+        const userExists = await User.findOne({ id: id });
+        if (!userExists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
         if (!id || !year || !month) {
             return res.status(400).json({ error: 'Missing parameters: id, year, month' });
         }
@@ -99,10 +104,6 @@ router.get('/report', async (req, res) => {
 
         // pull all costs for the user in the specified date range
         const costs = await Cost.find({ userid: id, date: { $gte: startDate, $lte: endDate } });
-
-        if (!costs.length) {
-            return res.status(404).json({ message: 'No data found for the specified user and date range' });
-        }
 
         // list of all possible categories
         const allCategories = ['food', 'education', 'health', 'housing', 'sport'];

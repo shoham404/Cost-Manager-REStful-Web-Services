@@ -46,9 +46,7 @@ describe('User Routes', () => {
      * @returns {Promise<void>}
      */
     test('✅ Should add a new user successfully', async () => {
-        const response = await request(app)
-            .post('/api/users/add')
-            .send({
+        const response = await request(app).post('/api/users/add').send({
                 id: "999999",
                 first_name: "Test",
                 last_name: "User",
@@ -67,9 +65,7 @@ describe('User Routes', () => {
      * @returns {Promise<void>}
      */
     test('❌ Should not add a user with missing fields', async () => {
-        const response = await request(app)
-            .post('/api/users/add')
-            .send({ id: "888888" });
+        const response = await request(app).post('/api/users/add').send({ id: "888888" });
 
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('error');
@@ -82,8 +78,7 @@ describe('User Routes', () => {
      * @returns {Promise<void>}
      */
     test('✅ Should fetch user details successfully', async () => {
-        const response = await request(app)
-            .get('/api/users/999999');
+        const response = await request(app).get('/api/users/999999');
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('first_name', 'Test');
@@ -96,8 +91,7 @@ describe('User Routes', () => {
      * @returns {Promise<void>}
      */
     test('❌ Should return 404 for a non-existing user', async () => {
-        const response = await request(app)
-            .get('/api/users/12345678');
+        const response = await request(app).get('/api/users/12345678');
 
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('error', 'User not found');
@@ -110,9 +104,7 @@ describe('User Routes', () => {
      * @returns {Promise<void>}
      */
     test('❌ Should not add a user with an existing ID', async () => {
-        const response = await request(app)
-            .post('/api/users/add')
-            .send({
+        const response = await request(app).post('/api/users/add').send({
                 id: "999999", 
                 first_name: "Duplicate",
                 last_name: "User",
@@ -137,9 +129,7 @@ describe('Cost Routes', () => {
      * @returns {Promise<void>}
      */
     test('✅ Should add a new cost successfully', async () => {
-        const response = await request(app)
-            .post('/api/add')
-            .send({
+        const response = await request(app).post('/api/add').send({
                 userid: "999999",
                 description: "Test Purchase",
                 category: "food",
@@ -157,9 +147,7 @@ describe('Cost Routes', () => {
      * @returns {Promise<void>}
      */
     test('❌ Should return 400 for missing cost fields', async () => {
-        const response = await request(app)
-            .post('/api/add')
-            .send({
+        const response = await request(app).post('/api/add').send({
                 userid: "999999",
                 sum: 50
             });
@@ -175,9 +163,7 @@ describe('Cost Routes', () => {
      * @returns {Promise<void>}
      */
     test('❌ Should return 404 for adding cost with non-existing user', async () => {
-        const response = await request(app)
-            .post('/api/add')
-            .send({
+        const response = await request(app).post('/api/add').send({
                 userid: "111111",
                 description: "Fake User Cost",
                 category: "health",
@@ -202,8 +188,7 @@ describe('Report Routes', () => {
      * @returns {Promise<void>}
      */
     test('✅ Should return report for existing data', async () => {
-        const response = await request(app)
-            .get('/api/report/?id=999999&year=2025&month=2');
+        const response = await request(app).get('/api/report/?id=999999&year=2025&month=2');
 
         expect(response.status).toBe(200);
         expect(response.body.length).toBeGreaterThan(0);
@@ -216,8 +201,7 @@ describe('Report Routes', () => {
      * @returns {Promise<void>}
      */
     test('❌ Should return 404 if no data found for report', async () => {
-        const response = await request(app)
-            .get('/api/report/?id=999999&year=2030&month=1');
+        const response = await request(app).get('/api/report/?id=999999&year=2030&month=1');
 
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('message', 'No data found for the specified user and date range');
@@ -230,8 +214,7 @@ describe('Report Routes', () => {
      * @returns {Promise<void>}
      */
     test('✅ Should correctly calculate and sum costs in a report', async () => {
-        const response = await request(app)
-            .get('/api/report/?id=999999&year=2025&month=2');
+        const response = await request(app).get('/api/report/?id=999999&year=2025&month=2');
 
         expect(response.status).toBe(200);
         response.body.forEach(category => {

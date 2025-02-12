@@ -92,44 +92,56 @@ router.get('/report', async (req, res) => {
 
         console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
 
-        // Check if a report already exists for the requested month and year.
+        // בדיקה אם כבר קיים דוח
         const existingReport = await Report.findOne({ userid: id, year: parsedYear, month: parsedMonth });
 
-        // Retrieve all expenses for the requested month.
+        // שליפת כל ההוצאות לחודש הנתון
         const costs = await Cost.find({ userid: id, date: { $gte: startDate, $lte: endDate } });
 
         if (!costs.length) {
             return res.status(404).json({ message: 'No data found for the specified user and date range' });
         }
 
-        // Organizing expenses by categories.
+        // רשימת קטגוריות קבועה מראש
+        const allCategories = ['food', 'education', 'health', 'housing', 'sport'];
+
+        // ארגון ההוצאות לפי קטגוריות
         const categorizedData = costs.reduce((acc, cost) => {
-            acc[cost.category] = acc[cost.category] || { total: 0, items: [] };
-            acc[cost.category].total += cost.sum;
-            acc[cost.category].items.push({ description: cost.description, sum: cost.sum, date: cost.date });
+            if (!acc[cost.category]) {
+                acc[cost.category] = [];
+            }
+            acc[cost.category].push({
+                sum: cost.sum,
+                description: cost.description,
+                day: new Date(cost.date).getDate()
+            });
             return acc;
         }, {});
 
-        const reportData = Object.entries(categorizedData).map(([category, data]) => ({
-            category,
-            total: data.total,
-            items: data.items
+        // יצירת הפלט כך שיכלול גם קטגוריות ריקות
+        const reportData = allCategories.map(category => ({
+            [category]: categorizedData[category] || []
         }));
 
         console.log('Generated Report Data:', reportData);
 
+        // אם קיים דוח, נבדוק אם יש שינויים
         if (existingReport) {
-            // Comparing the existing report with the new one to check for changes.
             if (JSON.stringify(existingReport.data) === JSON.stringify(reportData)) {
                 console.log('No changes detected, returning existing report.');
-                return res.json(existingReport.data);
+                return res.json({
+                    userid: id,
+                    year: parsedYear,
+                    month: parsedMonth,
+                    costs: existingReport.data
+                });
             }
 
             console.log('Changes detected, updating report.');
             await Report.deleteOne({ _id: existingReport._id });
         }
 
-        // Creating a new report and saving it to the database.
+        // יצירת ושמירת דוח חדש
         const newReport = await Report.create({
             userid: id,
             year: parsedYear,
@@ -138,7 +150,12 @@ router.get('/report', async (req, res) => {
         });
 
         console.log('New report saved.');
-        res.json(newReport.data);
+        res.json({
+            userid: id,
+            year: parsedYear,
+            month: parsedMonth,
+            costs: newReport.data
+        });
 
     } catch (err) {
         console.error('Error fetching report:', err);

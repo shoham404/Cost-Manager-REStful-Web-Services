@@ -14,9 +14,12 @@ const Cost = require('../models/Cost');
  * Route to add a new user.
  * This route requires user details and validates them before saving.
  *
- * @name post/add
- * @function
- * @memberof module:userRouter
+ * @route POST /api/users/add
+ * @param {string} id - The unique user ID.
+ * @param {string} first_name - The first name of the user.
+ * @param {string} last_name - The last name of the user.
+ * @param {Date} birthday - The date of birth of the user.
+ * @param {string} marital_status - The marital status of the user.
  * @param {express.Request} req - The request object, expecting user details.
  * @param {express.Response} res - The response object used to send back data or errors.
  * @throws {400} If required fields are missing or user ID already exists.
@@ -58,9 +61,12 @@ router.post('/add', async (req, res) => {
  * Route to retrieve a user by ID along with their total cost.
  * This route retrieves user details and computes the total cost associated with the user.
  *
- * @name get/:id
- * @function
- * @memberof module:userRouter
+ * @route GET /api/id
+ * @param {string} id - The unique user ID.
+ * @param {string} first_name - The first name of the user.
+ * @param {string} last_name - The last name of the user.
+ * @param {number} age - The age of the user.
+ * @param {number} total_cost - The total cost associated with the user.
  * @param {express.Request} req - The request object, expecting a user ID.
  * @param {express.Response} res - The response object used to send back data or errors.
  * @throws {404} If the user is not found.
@@ -84,7 +90,7 @@ router.get('/:id', async (req, res) => {
       id: user.id,
       first_name: user.first_name,
       last_name: user.last_name,
-      age: user.age, // הגיל מחושב על ידי ה-schema
+      age: user.age, // The age calculate by the schema
       total_cost: totalCost.length > 0 ? totalCost[0].total : 0
     });
   } catch (err) {

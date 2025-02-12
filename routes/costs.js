@@ -8,12 +8,14 @@ const User = require('../models/User');
  * Adds a new cost item for a user.
  * This route handles POST requests to add a new expense item to the database.
  *
- * @route POST /api/costs/add
+ * @route POST /api/add
  * @param {string} description - A brief description of the expense (e.g., "Groceries").
  * @param {string} category - The category of the expense (e.g., "Food", "Health").
  * @param {string} userid - The ID of the user making the expense.
  * @param {number} sum - The total amount of the expense (must be a positive number).
  * @param {string} [date] - The date of the expense. If not provided, the current date is used.
+ * @param {express.Request} req - The request object, containing expense details.
+ * @param {express.Response} res - The response object used to send back data or errors.
  * @returns {object} 201 - The newly created cost item.
  * @throws {Error} 400 - If required fields are missing or the sum is invalid.
  * @throws {Error} 404 - If the user does not exist.
@@ -58,7 +60,7 @@ router.post('/add', async (req, res) => {
 
 
 /**
- * @route GET /report
+ * @route GET api/report
  * @description Retrieves a monthly expense report for a specific user.
  * @param {Object} req - The request object.
  * @param {Object} req.query - Query parameters for the request.
@@ -67,9 +69,9 @@ router.post('/add', async (req, res) => {
  * @param {string} req.query.month - The month for which to generate the report.
  * @param {Object} res - The response object.
  * @returns {Object} JSON response containing the report data.
- * @throws {Object} Returns a 400 error if parameters are missing or invalid.
- * @throws {Object} Returns a 404 error if no data is found for the specified user and date range.
- * @throws {Object} Returns a 500 error if an internal server error occurs.
+ * @throws {Error} Returns a 400 error if parameters are missing or invalid.
+ * @throws {Error} Returns a 404 error if no data is found for the specified user and date range.
+ * @throws {Error} Returns a 500 error if an internal server error occurs.
  */
 router.get('/report', async (req, res) => {
     try {

@@ -70,7 +70,7 @@ router.post('/add', async (req, res) => {
  * @param {Object} res - The response object.
  * @returns {Object} JSON response containing the report data.
  * @throws {Error} Returns a 400 error if parameters are missing or invalid.
- * @throws {Error} Returns a 404 error if no data is found for the specified user and date range.
+ * @throws {Error} Returns a 404 error if user not found.
  * @throws {Error} Returns a 500 error if an internal server error occurs.
  */
 router.get('/report', async (req, res) => {

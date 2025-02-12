@@ -197,15 +197,15 @@ describe('Report Routes', () => {
     });
 
     /**
-     * Test for failing to retrieve a report when no data exists.
+     * Test for failing to retrieve a report when user does not exist.
      * @function
      * @async
      * @returns {Promise<void>}
      */
-    test('❌ Should return 404 if no data found for report', async () => {
-        const response = await request(app).get('/api/report/?id=999999&year=2030&month=1');
+    test('❌ Should return 404 if user does not exist', async () => {
+        const response = await request(app).get('/api/report/?id=9999&year=2030&month=1');
 
         expect(response.status).toBe(404);
-        expect(response.body).toHaveProperty('message', 'No data found for the specified user and date range');
+        expect(response.body).toHaveProperty('error', 'User not found');
     });
 });

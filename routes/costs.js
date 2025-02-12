@@ -92,20 +92,20 @@ router.get('/report', async (req, res) => {
 
         console.log(`Start Date: ${startDate}, End Date: ${endDate}`);
 
-        // בדיקה אם כבר קיים דוח
+        // Check for existing report
         const existingReport = await Report.findOne({ userid: id, year: parsedYear, month: parsedMonth });
 
-        // שליפת כל ההוצאות לחודש הנתון
+        // pull all costs for the user in the specified date range
         const costs = await Cost.find({ userid: id, date: { $gte: startDate, $lte: endDate } });
 
         if (!costs.length) {
             return res.status(404).json({ message: 'No data found for the specified user and date range' });
         }
 
-        // רשימת קטגוריות קבועה מראש
+        // list of all possible categories
         const allCategories = ['food', 'education', 'health', 'housing', 'sport'];
 
-        // ארגון ההוצאות לפי קטגוריות
+        // organize costs by category
         const categorizedData = costs.reduce((acc, cost) => {
             if (!acc[cost.category]) {
                 acc[cost.category] = [];
@@ -118,14 +118,14 @@ router.get('/report', async (req, res) => {
             return acc;
         }, {});
 
-        // יצירת הפלט כך שיכלול גם קטגוריות ריקות
+        // create report data with all categories
         const reportData = allCategories.map(category => ({
             [category]: categorizedData[category] || []
         }));
 
         console.log('Generated Report Data:', reportData);
 
-        // אם קיים דוח, נבדוק אם יש שינויים
+        // if an existing report exists and the data is the same, return the existing report
         if (existingReport) {
             if (JSON.stringify(existingReport.data) === JSON.stringify(reportData)) {
                 console.log('No changes detected, returning existing report.');
@@ -141,7 +141,7 @@ router.get('/report', async (req, res) => {
             await Report.deleteOne({ _id: existingReport._id });
         }
 
-        // יצירת ושמירת דוח חדש
+        // create and save a new report
         const newReport = await Report.create({
             userid: id,
             year: parsedYear,

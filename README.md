@@ -7,6 +7,8 @@ The **Expense Tracker API** is a **Node.js + Express.js** application that enabl
 It provides features such as **user management, expense recording, and monthly expense reports**.
 The project is backed by **MongoDB** and follows a **RESTful API architecture** with structured endpoints.
 
+### You can run online tests using the address https://cost-manager-g8w5.onrender.com
+
 #### This repository contains:
 
 * **Backend API** built with **Express.js**.
